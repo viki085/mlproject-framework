@@ -77,13 +77,13 @@ class ModelTrainer:
 
             model_report = {}
 
-            for model_name, model in self.models.items():
+            for model_name, model_value in self.models.items():
+                model = model_value
 
                 gs = GridSearchCV(model, self.parameters[model_name], cv=3, n_jobs=-1)
                 gs.fit(X_train, y_train)
 
-                # Use the best estimator from GridSearchCV
-                model = gs.best_estimator_
+                model.set_params(**gs.best_params_)
                 model.fit(X_train, y_train)
                 y_pred = model.predict(X_test)
                 r2_square = r2_score(y_test, y_pred)

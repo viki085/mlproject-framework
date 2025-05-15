@@ -130,7 +130,6 @@ celerybeat.pid
 # Environments
 .git
 .artifacts/
-.gitattributes
 .env
 .venv
 env/

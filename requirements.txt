@@ -10,5 +10,6 @@ lightgbm
 catboost
 pandas-summary
 dill
+flask
 -e .
 
