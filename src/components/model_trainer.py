@@ -10,6 +10,8 @@ from sklearn.neighbors import KNeighborsRegressor
 from sklearn.tree import DecisionTreeRegressor
 from xgboost import XGBRegressor
 
+from sklearn.model_selection import GridSearchCV
+
 from src.exception import CustomException
 from src.logger import logging
 from src.utils import save_object
@@ -33,6 +35,38 @@ class ModelTrainer:
             'Gradient Boosting': GradientBoostingRegressor(),
             'AdaBoost': AdaBoostRegressor()
         }
+        self.parameters = {
+            'Linear Regression': {
+                'fit_intercept': [True],
+            },
+            'Random Forest': {
+                'n_estimators': [10, 50, 100],
+                'max_depth': [None, 10, 20, 30]
+            },
+            'Decision Tree': {
+                'max_depth': [None, 10, 20, 30]
+            },
+            'KNN': {
+                'n_neighbors': [3, 5, 7]
+            },
+            'XGBoost': {
+                'n_estimators': [100, 200],
+                'learning_rate': [0.01, 0.1]
+            },
+            'CatBoost': {
+                'iterations': [100, 200],
+                'depth': [6, 8]
+            },
+            'Gradient Boosting': {
+                'n_estimators': [100, 200],
+                'learning_rate': [0.01, 0.1]
+            },
+            'AdaBoost': {
+                'n_estimators': [50, 100],
+                'learning_rate': [1.0, 1.5]
+            }
+    
+        }
         self.best_model = None
 
     def initiate_model_trainer(self, train_array, test_array):
@@ -44,6 +78,12 @@ class ModelTrainer:
             model_report = {}
 
             for model_name, model in self.models.items():
+
+                gs = GridSearchCV(model, self.parameters[model_name], cv=3, n_jobs=-1)
+                gs.fit(X_train, y_train)
+
+                # Use the best estimator from GridSearchCV
+                model = gs.best_estimator_
                 model.fit(X_train, y_train)
                 y_pred = model.predict(X_test)
                 r2_square = r2_score(y_test, y_pred)
