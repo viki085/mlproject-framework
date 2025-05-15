@@ -2,6 +2,8 @@ import os
 import sys
 from src.logger import logging
 from src.exception import CustomException
+from src.components.data_transformation import DataTransformation
+import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from dataclasses import dataclass
@@ -40,15 +42,17 @@ class DataIngestion:
             logging.info("Train and test data saved")
             return (
                 self.config.train_data_path,
-                self.config.test_data_path,
-                self.config.raw_data_path
+                self.config.test_data_path
             )
         except Exception as e:
             raise CustomException(e, sys)
         
 if __name__ == "__main__":
     data_ingestion = DataIngestion()
-    data_ingestion.initiate_data_ingestion()
+    train_data, test_data = data_ingestion.initiate_data_ingestion()
+
+    data_transformation = DataTransformation()
+    preprocessor = data_transformation.initiate_data_transformation(train_data, test_data)
 
 
 

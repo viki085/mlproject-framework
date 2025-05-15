@@ -9,6 +9,6 @@ xgboost
 lightgbm
 catboost
 pandas-summary
-
+dill
 -e .
 
